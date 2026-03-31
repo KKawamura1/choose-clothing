@@ -1,0 +1,43 @@
+name: Daily Clothing Notification
+
+on:
+  schedule:
+    - cron: "0 22 * * *"
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    env:
+      LATITUDE: ${{ secrets.LATITUDE }}
+      LONGITUDE: ${{ secrets.LONGITUDE }}
+      NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+      NTFY_SERVER: ${{ secrets.NTFY_SERVER }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate required secrets
+        run: |
+          test -n "$LATITUDE"
+          test -n "$LONGITUDE"
+          test -n "$NTFY_TOPIC"
+
+      - name: Send clothing recommendation
+        run: |
+          args=(
+            --latitude "$LATITUDE"
+            --longitude "$LONGITUDE"
+            --ntfy-topic "$NTFY_TOPIC"
+          )
+
+          if [[ -n "${NTFY_SERVER}" ]]; then
+            args+=(--ntfy-server "$NTFY_SERVER")
+          fi
+
+          python3 clothing_app.py "${args[@]}"
