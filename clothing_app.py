@@ -25,6 +25,8 @@ CLOTHING_ITEMS = {
     "6": "半袖の服",
 }
 
+DEFAULT_NTFY_SERVER = "https://ntfy.sh"
+
 OUTFIT_LEVELS = [
     {
         "level": 1,
@@ -147,7 +149,8 @@ def send_notification(title: str, message: str) -> None:
 
 
 def send_ntfy_notification(server: str, topic: str, title: str, message: str) -> None:
-    url = f"{server.rstrip('/')}/{urllib.parse.quote(topic, safe='')}"
+    normalized_server = server.strip() or DEFAULT_NTFY_SERVER
+    url = f"{normalized_server.rstrip('/')}/{urllib.parse.quote(topic, safe='')}"
     request = urllib.request.Request(
         url,
         data=message.encode("utf-8"),
@@ -182,8 +185,8 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--ntfy-server",
-        default=os.environ.get("NTFY_SERVER", "https://ntfy.sh"),
-        help="ntfy server URL (default: https://ntfy.sh or $NTFY_SERVER)",
+        default=os.environ.get("NTFY_SERVER") or DEFAULT_NTFY_SERVER,
+        help="ntfy server URL (default: https://ntfy.sh or non-empty $NTFY_SERVER)",
     )
     return parser.parse_args()
 

@@ -42,6 +42,18 @@ class NtfyNotificationTests(unittest.TestCase):
         self.assertEqual(request.headers["Title"], "今日の服装")
         self.assertEqual(request.data, "おすすめ: 肌着 / 綿の長袖".encode("utf-8"))
 
+    @patch("clothing_app.urllib.request.urlopen")
+    def test_send_ntfy_notification_uses_default_server_for_blank_value(self, mock_urlopen) -> None:
+        send_ntfy_notification(
+            server="",
+            topic="secret-topic",
+            title="今日の服装",
+            message="おすすめ: 肌着 / 綿の長袖",
+        )
+
+        request = mock_urlopen.call_args.args[0]
+        self.assertEqual(request.full_url, "https://ntfy.sh/secret-topic")
+
 
 if __name__ == "__main__":
     unittest.main()
