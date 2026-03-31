@@ -9,6 +9,7 @@ import os
 import platform
 import subprocess
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -103,8 +104,19 @@ def fetch_forecast(latitude: float, longitude: float) -> Forecast:
         },
     )
 
-    with urllib.request.urlopen(request, timeout=10) as response:
-        payload = json.load(response)
+    last_error: Exception | None = None
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(request, timeout=10) as response:
+                payload = json.load(response)
+            break
+        except urllib.error.URLError as exc:
+            last_error = exc
+            if attempt == 2:
+                raise
+            time.sleep(2 * (attempt + 1))
+    else:
+        raise RuntimeError(f"Failed to fetch forecast: {last_error}")
 
     daily = payload["daily"]
     return Forecast(
