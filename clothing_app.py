@@ -26,6 +26,7 @@ CLOTHING_ITEMS = {
 }
 
 DEFAULT_NTFY_SERVER = "https://ntfy.sh"
+NTFY_TITLE = "Daily clothing"
 
 OUTFIT_LEVELS = [
     {
@@ -226,7 +227,7 @@ def main() -> int:
             send_ntfy_notification(
                 server=args.ntfy_server,
                 topic=ntfy_topic,
-                title="今日の服装",
+                title=NTFY_TITLE,
                 message=message,
             )
         except urllib.error.URLError as exc:

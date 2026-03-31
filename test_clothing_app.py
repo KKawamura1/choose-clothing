@@ -32,14 +32,14 @@ class NtfyNotificationTests(unittest.TestCase):
         send_ntfy_notification(
             server="https://ntfy.sh",
             topic="secret-topic",
-            title="今日の服装",
+            title="Daily clothing",
             message="おすすめ: 肌着 / 綿の長袖",
         )
 
         request = mock_urlopen.call_args.args[0]
         self.assertEqual(request.full_url, "https://ntfy.sh/secret-topic")
         self.assertEqual(request.get_method(), "POST")
-        self.assertEqual(request.headers["Title"], "今日の服装")
+        self.assertEqual(request.headers["Title"], "Daily clothing")
         self.assertEqual(request.data, "おすすめ: 肌着 / 綿の長袖".encode("utf-8"))
 
     @patch("clothing_app.urllib.request.urlopen")
@@ -47,7 +47,7 @@ class NtfyNotificationTests(unittest.TestCase):
         send_ntfy_notification(
             server="",
             topic="secret-topic",
-            title="今日の服装",
+            title="Daily clothing",
             message="おすすめ: 肌着 / 綿の長袖",
         )
 
