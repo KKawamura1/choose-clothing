@@ -2,7 +2,7 @@ name: Daily Clothing Notification
 
 on:
   schedule:
-    - cron: "0 22 * * *"
+    - cron: "30 21 * * *"
   workflow_dispatch:
 
 env:
